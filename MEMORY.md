@@ -13,6 +13,7 @@ Memoria del proyecto entre sesiones. Máximo ~50 líneas: resume o elimina lo qu
 - **Cuatro firmas en `documentos`:** `firma_cliente` + `firma_recep` (cliente→recepción, en `IndexPage.vue`) y `firma_contador_recep` + `firma_contador` (recepción→contador, en `DireccionamientoPage.vue`).
 - **Semáforo por estados:** Recibido → Asignado → En Proceso → Completado. Solo `COMPLETADO` pinta verde; `EN_PROCESO` queda en ámbar para no marcar al cliente al día antes de tiempo.
 - **Sin store compartido:** La maqueta no usa Pinia; cada vista tiene sus datos mock. El semáforo de `ClientesPage` NO se actualiza en vivo al firmar en `DireccionamientoPage`.
+- **Paleta de colores, tipografias e imagenes institucionales:** Se encuentran en la carpeta `src/assets` y `src/css`.
 
 ## Decisiones (y por qué)
 
@@ -28,6 +29,10 @@ Memoria del proyecto entre sesiones. Máximo ~50 líneas: resume o elimina lo qu
 - **Excepción a la regla de campos:** el login NO guarda datos en ninguna tabla; autentica contra `usuarios` y abre sesión. "Recordar mi acceso" es estado del navegador, no una columna.
 - **Login sin sesión real:** No hay store ni autenticación; el menú no se filtra por rol. Todo el menú es visible tras ingresar.
 - **Datos de ejemplo:** Los correos en las vistas usan `@ejemplo.com`, nunca dominios reales.
+
+- **Identidad visual en `IndexPage.vue`:** acuse y chip del folio usan `$secondary` (#5abbf1) en vez de `blue-1`; bordes y fondos de firma usan `$secondary-white-alternative` (#e5e6eb).
+- **Tipografías cargadas en `app.scss`:** Matter (texto general, pesos 400/500/600/700) y Monument Extended (400/700). Se quitó `roboto-font` de los extras en `quasar.config.js`.
+- **Logos oficiales siguen sin usarse:** las vistas cargan `public/logo.jpg`, no las variantes de `/src/assets/icons`.
 
 ## Aprendizajes y errores a evitar
 

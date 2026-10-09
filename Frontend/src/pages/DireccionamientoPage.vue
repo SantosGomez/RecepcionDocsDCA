@@ -3,7 +3,9 @@
     <!-- Encabezado -->
     <div class="row items-center justify-between q-mb-md">
       <div>
-        <div class="text-h5 text-weight-bold text-primary">Direccionamiento y Recepción Contable</div>
+        <div class="text-h5 text-weight-bold text-primary">
+          Direccionamiento y Recepción Contable
+        </div>
         <div class="text-subtitle2 text-grey-7">
           Entrega formal de documentación del área de recepción al contador asignado
         </div>
@@ -26,7 +28,9 @@
             <q-icon name="inventory_2" color="primary" size="36px" class="q-mr-sm" />
             <div>
               <div class="text-subtitle2 text-grey-7">Recibidos por Recepción</div>
-              <div class="text-h6 text-weight-bold text-primary">{{ contarPorEstado('Recibido') }}</div>
+              <div class="text-h6 text-weight-bold text-primary">
+                {{ contarPorEstado('Recibido') }}
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -37,7 +41,9 @@
             <q-icon name="assignment_ind" color="warning" size="36px" class="q-mr-sm" />
             <div>
               <div class="text-subtitle2 text-grey-7">Asignados a Contador</div>
-              <div class="text-h6 text-weight-bold text-warning">{{ contarPorEstado('Asignado') }}</div>
+              <div class="text-h6 text-weight-bold text-warning">
+                {{ contarPorEstado('Asignado') }}
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -48,7 +54,9 @@
             <q-icon name="pending_actions" color="amber-9" size="36px" class="q-mr-sm" />
             <div>
               <div class="text-subtitle2 text-grey-7">En Proceso Contable</div>
-              <div class="text-h6 text-weight-bold text-amber-9">{{ contarPorEstado('En Proceso') }}</div>
+              <div class="text-h6 text-weight-bold text-amber-9">
+                {{ contarPorEstado('En Proceso') }}
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -80,7 +88,13 @@
             clearable
             style="min-width: 200px"
           />
-          <q-input v-model="busqueda" dense outlined placeholder="Buscar folio o cliente..." style="min-width: 220px">
+          <q-input
+            v-model="busqueda"
+            dense
+            outlined
+            placeholder="Buscar folio o cliente..."
+            style="min-width: 220px"
+          >
             <template #append>
               <q-icon name="search" />
             </template>
@@ -210,7 +224,10 @@
               <q-card
                 flat
                 bordered
-                :class="['q-pa-sm bg-grey-1', { 'border-negative': submittedEntrega && firmaRecepcionistaVacia }]"
+                :class="[
+                  'q-pa-sm bg-grey-1',
+                  { 'border-negative': submittedEntrega && firmaRecepcionistaVacia },
+                ]"
               >
                 <div class="text-caption text-weight-bold text-grey-8 q-mb-xs">
                   Firma de Recepción DCA (Entrega) *
@@ -236,7 +253,10 @@
               <q-card
                 flat
                 bordered
-                :class="['q-pa-sm bg-grey-1', { 'border-negative': submittedEntrega && firmaContadorVacia }]"
+                :class="[
+                  'q-pa-sm bg-grey-1',
+                  { 'border-negative': submittedEntrega && firmaContadorVacia },
+                ]"
               >
                 <div class="text-caption text-weight-bold text-grey-8 q-mb-xs">
                   Firma del Contador (Recibido) *
@@ -300,19 +320,27 @@
           <q-list separator dense>
             <q-item>
               <q-item-section class="text-grey-7">Folio:</q-item-section>
-              <q-item-section side class="text-weight-bold">{{ documentoSeleccionado.folio }}</q-item-section>
+              <q-item-section side class="text-weight-bold">{{
+                documentoSeleccionado.folio
+              }}</q-item-section>
             </q-item>
             <q-item>
               <q-item-section class="text-grey-7">Asunto:</q-item-section>
-              <q-item-section side class="text-weight-bold">{{ documentoSeleccionado.asunto }}</q-item-section>
+              <q-item-section side class="text-weight-bold">{{
+                documentoSeleccionado.asunto
+              }}</q-item-section>
             </q-item>
             <q-item>
               <q-item-section class="text-grey-7">Recibido por:</q-item-section>
-              <q-item-section side class="text-weight-bold">{{ documentoSeleccionado.recibidoPor }}</q-item-section>
+              <q-item-section side class="text-weight-bold">{{
+                documentoSeleccionado.recibidoPor
+              }}</q-item-section>
             </q-item>
             <q-item>
               <q-item-section class="text-grey-7">Fecha límite SLA:</q-item-section>
-              <q-item-section side class="text-weight-bold">{{ documentoSeleccionado.fechaLimiteSla }}</q-item-section>
+              <q-item-section side class="text-weight-bold">{{
+                documentoSeleccionado.fechaLimiteSla
+              }}</q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
@@ -343,7 +371,13 @@ const columns = [
   { name: 'folio', label: 'Folio', field: 'folio', align: 'left', sortable: true },
   { name: 'cliente', label: 'Cliente / RFC', field: 'cliente', align: 'left', sortable: true },
   { name: 'tipoDocumento', label: 'Tipo de Documento', field: 'tipoDocumento', align: 'left' },
-  { name: 'fechaRecepcion', label: 'Recepción', field: 'fechaRecepcion', align: 'left', sortable: true },
+  {
+    name: 'fechaRecepcion',
+    label: 'Recepción',
+    field: 'fechaRecepcion',
+    align: 'left',
+    sortable: true,
+  },
   { name: 'prioridad', label: 'Prioridad', field: 'prioridad', align: 'center', sortable: true },
   { name: 'contador', label: 'Contador', field: 'contador', align: 'left' },
   { name: 'estado', label: 'Estado', field: 'estado', align: 'center', sortable: true },
@@ -423,7 +457,7 @@ const rowsFiltrados = computed(() => {
   if (busqueda.value.trim()) {
     const q = busqueda.value.toLowerCase()
     resultado = resultado.filter(
-      (r) => r.folio.toLowerCase().includes(q) || r.cliente.toLowerCase().includes(q)
+      (r) => r.folio.toLowerCase().includes(q) || r.cliente.toLowerCase().includes(q),
     )
   }
   return resultado
@@ -530,7 +564,12 @@ const cerrarDialogoEntrega = () => {
 
 const limpiarFirmas = () => {
   if (ctxRecepcionista && canvasRecepcionista.value) {
-    ctxRecepcionista.clearRect(0, 0, canvasRecepcionista.value.width, canvasRecepcionista.value.height)
+    ctxRecepcionista.clearRect(
+      0,
+      0,
+      canvasRecepcionista.value.width,
+      canvasRecepcionista.value.height,
+    )
   }
   if (ctxContador && canvasContador.value) {
     ctxContador.clearRect(0, 0, canvasContador.value.width, canvasContador.value.height)

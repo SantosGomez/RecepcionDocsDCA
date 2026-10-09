@@ -6,6 +6,10 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
 
 - HTML, VUE 3, Vite, Pinia, JavaScript, Quasar Framework, librerias como axios, quasar, jspdf, html2pdf.js.
 - El proyecto tiene 2 carpetas la carpeta "Frontend" que es donde se encuentra el codigo de la aplicacion, el esqueleto del proyecto, vistas y funciones del framework y la carpeta "Backend" que es el servidor de base de datos y la logica del negocio.
+- en las carpetas de el proyecto en front se tiene una carpeta de nombre `/src` la cual en la carpeta `/assets` se tiene la tipografia y las imagenes que se utilizara para el proyecto.
+- la tipografia se encuentra en la carpeta `/assets/fonts` y las imagenes se encuentran en la carpeta `/assets/icons` la cual se divide en 2 subcarpetas `/assets/icons/JPG` y `/assets/icons/PNG`.
+- la carpeta css con los estilos se encuentra en la carpeta `/src/css` y ya tiene la paleta de colores institucional definidos en `/src/css/quasar.variables.scss`.
+- estos son las variables o componentes scss de los colores institucionales: $primary, $secondary, $accent, $secondary-black, $secondary-white, $secondary-white-alternative y estos de para el semaforo y estados de notificaciones o alertas: $positive, $negative, $info, $warning.
 
 ## Vistas
 
@@ -57,6 +61,14 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
 - tener tooltips para dar contexto al usuario y evitar ambiguedad.
 - los botones que tengan un icono deben tener un tooltip.
 - los botones de icono (como el menú lateral) deben tener también `aria-label` en español para lectores de pantalla.
+
+## Reglas de diseño (identidad visual)
+
+- Usar las variables SCSS de `Frontend/src/css/quasar.variables.scss`: `$primary`, `$secondary`, `$accent`, `$negative`, `$positive`, `$warning`, `$info`, `$secondary-white-alternative`, etc.
+- No usar clases de color de Material (`blue-1`, `grey-7`) para elementos de marca. Solo se permiten grises Material muy oscuros en texto (`text-grey-7` a `text-grey-9`) porque cumplen contraste WCAG.
+- ⚠️ **No usar `$secondary-white` (#bfbfbf) para texto**: sobre fondo blanco da 2.5:1 y no cumple el mínimo de 4.5:1 de WCAG. Solo usarlo en bordes o fondos.
+- Tipografías: **Matter** para texto general, **Monument Extended** disponible para títulos. Se cargan en `Frontend/src/css/app.scss`.
+- Logos oficiales en `Frontend/src/assets/icons/PNG` y `/JPG` (variantes `DELGROW_LOGO` e `ISOTIPO`). No se han integrado aún en las vistas.
 
 ## Reglas de dominio / trampas conocidas
 

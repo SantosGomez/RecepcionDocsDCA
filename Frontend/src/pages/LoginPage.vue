@@ -8,7 +8,12 @@
             <!-- Tarjeta de Ingreso -->
             <q-card flat class="shadow-3 rounded-borders bg-white">
               <q-card-section class="text-center q-pb-none">
-                <q-img src="/logo-alternativo.jpg" width="200px" height="200px" class="rounded-borders" />
+                <q-img
+                  src="/logo-alternativo.jpg"
+                  width="200px"
+                  height="200px"
+                  class="rounded-borders"
+                />
                 <div class="text-h5 text-weight-bold text-primary q-mt-md">Ingreso al Sistema</div>
                 <div class="text-subtitle2 text-grey-7">
                   Grupo DCA — Recepción y Control Documental
@@ -38,7 +43,11 @@
                     dense
                     :type="mostrarContrasena ? 'text' : 'password'"
                     autocomplete="current-password"
-                    :rules="[(val) => !!val || 'Ingrese su contraseña', (val) => (val || '').length >= 6 || 'La contraseña debe tener al menos 6 caracteres']"
+                    :rules="[
+                      (val) => !!val || 'Ingrese su contraseña',
+                      (val) =>
+                        (val || '').length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
+                    ]"
                   >
                     <template #prepend>
                       <q-icon name="lock" color="primary" />
@@ -78,7 +87,13 @@
 
                   <div class="row items-center justify-between">
                     <q-toggle v-model="form.recordarSesion" label="Recordar mi acceso" dense />
-                    <q-btn flat dense no-caps label="¿Olvidaste tu contraseña?" @click="recuperarContrasena">
+                    <q-btn
+                      flat
+                      dense
+                      no-caps
+                      label="¿Olvidaste tu contraseña?"
+                      @click="recuperarContrasena"
+                    >
                       <q-tooltip>Enviar un enlace de restablecimiento a su correo</q-tooltip>
                     </q-btn>
                   </div>

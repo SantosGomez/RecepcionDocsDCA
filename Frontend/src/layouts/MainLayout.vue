@@ -82,7 +82,9 @@
           exact
           active-class="text-primary text-weight-bold bg-blue-1"
         >
-          <q-item-section avatar><q-icon name="assignment_return" color="primary" /></q-item-section>
+          <q-item-section avatar
+            ><q-icon name="assignment_return" color="primary"
+          /></q-item-section>
           <q-item-section>Direccionamiento</q-item-section>
           <q-tooltip anchor="center right" self="center left"
             >Entrega formal y firma de recepción del contador asignado</q-tooltip
@@ -117,7 +119,7 @@
             >Gestión de usuarios, roles y permisos</q-tooltip
           >
         </q-item>
-      <q-separator class="q-my-xs" />
+        <q-separator class="q-my-xs" />
         <q-item clickable v-ripple to="/login" class="text-grey-8">
           <q-item-section avatar><q-icon name="logout" color="negative" /></q-item-section>
           <q-item-section>Cerrar Sesión</q-item-section>
