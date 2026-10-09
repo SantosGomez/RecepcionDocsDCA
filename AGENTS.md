@@ -38,6 +38,14 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
   - `npm install`
   - `npm run dev`
 
+## Base de Datos y Entorno Local
+
+- **Servidor MySQL:** Local mediante XAMPP (`localhost:3306`).
+- **Base de Datos:** `dca_documentos` (creada mediante `Backend/schema.sql`).
+- **Usuario local:** `root` (sin contraseña).
+- **Ruta binario MySQL (XAMPP):** `C:\xampp\mysql\bin\mysql.exe`
+- **Permisos del Agente:** El agente está autorizado para ejecutar el script `Backend/schema.sql` y migraciones en el entorno local de desarrollo cuando el usuario lo solicite.
+
 ## Convenciones
 
 - Textos de la interfaz en español.
@@ -58,6 +66,8 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
 - No crear archivos que no sean necesarios, siempre preguntar antes de crear archivos nuevos o modificar los existentes.
 - No modificar archivos que no sean necesarios, siempre preguntar antes de modificar archivos existentes.
 - Haz solo lo que se pide: no añadas funcionalidades por tu cuenta.
+- No modificar archivos que ya funcionan, no modificarlas sin preguntarme.
+- no agregar inputs o campos a formularios si no estan en la tabla donde se guardara informacion, en caso de necesitar mas campos proponer un cambio a la tabla y preguntar si se procede a modificar.
 - Cambios pequeños y enfocados; no reescribas lo que ya funciona.
 - Al terminar, resume qué has cambiado y cualquier decisión que deba revisar.
 

@@ -13,7 +13,7 @@
             </div>
             <div class="col-auto">
               <q-chip color="blue-1" text-color="primary" icon="history">
-                Folio actual: <strong class="q-ml-xs">DCA-2026-0842</strong>
+                Folio actual: <strong class="q-ml-xs">{{ form.folio }}</strong>
               </q-chip>
             </div>
           </q-card-section>
@@ -57,6 +57,7 @@
                     use-input
                     input-debounce="0"
                     options-dense
+                    @update:model-value="onClienteChange"
                     :rules="[(val) => !!val || 'Seleccione o ingrese un cliente']"
                   >
                     <template #prepend>
@@ -72,6 +73,29 @@
                 2. Clasificación Contable y Periodo
               </div>
 
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-sm-6">
+                  <q-input
+                    v-model="form.asunto"
+                    label="Asunto del Documento *"
+                    outlined
+                    dense
+                    :rules="[(val) => !!val || 'El asunto es requerido']"
+                  />
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-select
+                    v-model="form.departamento"
+                    :options="opcionesDepartamentos"
+                    label="Departamento *"
+                    outlined
+                    dense
+                    options-dense
+                    :rules="[(val) => !!val || 'Seleccione el departamento']"
+                  />
+                </div>
+              </div>
+              
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-sm-6">
                   <q-select
@@ -112,10 +136,45 @@
                 </div>
               </div>
 
-              <!-- Sección 3: Vía de Entrega y Carga de Archivos -->
+              <!-- Sección 3: Vía de Entrega y Prioridad -->
               <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-pt-sm">
-                <q-icon name="cloud_upload" class="q-mr-xs text-primary" size="20px" />
-                3. Vía de Entrega y Archivos Adjuntos
+                <q-icon name="assignment_late" class="q-mr-xs text-primary" size="20px" />
+                3. Prioridad y Vía de Entrega
+              </div>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-sm-4">
+                  <q-select
+                    v-model="form.prioridad"
+                    :options="opcionesPrioridades"
+                    label="Prioridad *"
+                    outlined
+                    dense
+                    options-dense
+                    @update:model-value="calcularSla"
+                  />
+                </div>
+                <div class="col-12 col-sm-4">
+                  <q-input
+                    v-model="form.fechaLimiteSla"
+                    label="Fecha Límite SLA"
+                    outlined
+                    dense
+                    readonly
+                    hint="Calculada automáticamente según prioridad"
+                  />
+                </div>
+                <div class="col-12 col-sm-4">
+                  <q-select
+                    v-model="form.contadorAsignado"
+                    :options="opcionesContadores"
+                    label="Contador Asignado"
+                    outlined
+                    dense
+                    options-dense
+                    use-input
+                  />
+                </div>
               </div>
 
               <div class="row q-col-gutter-md">
@@ -133,23 +192,21 @@
                     dense
                   />
                 </div>
-
                 <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="form.recibidoPor"
-                    label="Atendido / Recibido por *"
-                    outlined
-                    dense
-                    readonly
-                  >
-                    <template #prepend>
-                      <q-icon name="badge" color="primary" />
-                    </template>
-                  </q-input>
+                  <q-toggle
+                    v-model="form.notificarCorreo"
+                    label="Notificar al cliente por correo al finalizar"
+                    color="primary"
+                  />
                 </div>
               </div>
 
-              <!-- Zona de subida de archivos (Simulación PWA) -->
+              <!-- Archivos y firmas... -->
+              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-pt-sm">
+                <q-icon name="draw" class="q-mr-xs text-primary" size="20px" />
+                4. Archivos Adjuntos y Firmas
+              </div>
+
               <div class="q-my-sm">
                 <q-file
                   v-model="form.archivos"
@@ -158,6 +215,8 @@
                   multiple
                   use-chips
                   append
+                  accept=".pdf, .xml, .zip, .jpg"
+                  @update:model-value="validarTamañoArchivos"
                 >
                   <template #prepend>
                     <q-icon name="attach_file" color="primary" />
@@ -168,36 +227,19 @@
                 </q-file>
               </div>
 
-              <!-- Sección 4: Firmas Digitales de Conformidad -->
-              <div class="text-subtitle1 text-weight-bold text-grey-8 row items-center q-pt-sm">
-                <q-icon name="draw" class="q-mr-xs text-primary" size="20px" />
-                4. Firmas Digitales de Conformidad
-              </div>
-
               <div class="row q-col-gutter-md">
-                <!-- Firma de Entregado (Cliente) -->
                 <div class="col-12 col-sm-6">
-                  <q-card flat bordered class="q-pa-sm bg-grey-1">
+                  <q-card flat bordered :class="['q-pa-sm bg-grey-1', { 'border-negative': firmaClienteVacia && submitted }]">
                     <div class="row items-center justify-between q-mb-xs">
-                      <div class="text-caption text-weight-bold text-grey-8">
-                        Firma de Entregado (Cliente / Entrega) *
+                      <div class="text-caption text-weight-bold" :class="[firmaClienteVacia && submitted ? 'text-negative' : 'text-grey-8']">
+                        Firma de Entregado (Cliente) *
                       </div>
-                      <q-btn
-                        flat
-                        dense
-                        size="sm"
-                        color="negative"
-                        icon="clear"
-                        label="Limpiar"
-                        @click="limpiarFirmaCliente"
-                      >
+                      <q-btn flat dense size="sm" color="negative" icon="clear" label="Limpiar" @click="limpiarFirmaCliente">
                         <q-tooltip>Limpiar trazo de la firma del cliente</q-tooltip>
                       </q-btn>
                     </div>
                     <canvas
                       ref="canvasCliente"
-                      width="350"
-                      height="120"
                       class="bg-white rounded-borders style-signature-canvas"
                       @mousedown="startDrawingCliente"
                       @mousemove="drawCliente"
@@ -208,34 +250,22 @@
                       @touchend.prevent="stopDrawingCliente"
                     ></canvas>
                     <div class="text-caption text-grey-6 text-center q-mt-xs">
-                      <q-icon name="gesture" /> Dibuje la firma con el dedo o ratón
+                       <q-icon name="gesture" /> Dibuje la firma con el dedo o ratón
                     </div>
                   </q-card>
                 </div>
-
-                <!-- Firma de Recibido (Recepcionista DCA) -->
                 <div class="col-12 col-sm-6">
-                  <q-card flat bordered class="q-pa-sm bg-grey-1">
+                  <q-card flat bordered :class="['q-pa-sm bg-grey-1', { 'border-negative': firmaRecepcionVacia && submitted }]">
                     <div class="row items-center justify-between q-mb-xs">
-                      <div class="text-caption text-weight-bold text-grey-8">
-                        Firma de Recibido (Usuario Recepción DCA) *
+                      <div class="text-caption text-weight-bold" :class="[firmaRecepcionVacia && submitted ? 'text-negative' : 'text-grey-8']">
+                        Firma de Recibido (DCA) *
                       </div>
-                      <q-btn
-                        flat
-                        dense
-                        size="sm"
-                        color="negative"
-                        icon="clear"
-                        label="Limpiar"
-                        @click="limpiarFirmaRecepcion"
-                      >
+                      <q-btn flat dense size="sm" color="negative" icon="clear" label="Limpiar" @click="limpiarFirmaRecepcion">
                         <q-tooltip>Limpiar trazo de la firma del recepcionista</q-tooltip>
                       </q-btn>
                     </div>
                     <canvas
                       ref="canvasRecepcion"
-                      width="350"
-                      height="120"
                       class="bg-white rounded-borders style-signature-canvas"
                       @mousedown="startDrawingRecepcion"
                       @mousemove="drawRecepcion"
@@ -252,39 +282,21 @@
                 </div>
               </div>
 
-              <!-- Comentarios adicionales -->
-              <q-input
-                v-model="form.observaciones"
-                type="textarea"
-                rows="2"
-                label="Observaciones o notas adicionales"
-                outlined
-                dense
-                placeholder="Ej: Facturas pendientes de la segunda quincena, faltan 2 estados de cuenta de Santander."
-              />
-
-              <!-- Acciones -->
-              <q-separator />
+              <q-input v-model="form.observaciones" type="textarea" rows="2" label="Observaciones" outlined dense />
 
               <div class="row justify-end q-gutter-sm">
-                <q-btn label="Limpiar Formulario" color="grey-7" flat @click="resetForm" />
-                <q-btn
-                  type="submit"
-                  label="Registrar Recepción y Generar Acuse"
-                  color="primary"
-                  icon-right="receipt_long"
-                  class="q-px-md"
-                >
-                  <q-tooltip>Registrar la entrega e imprimir acuse de recepción</q-tooltip>
+                <q-btn label="Limpiar" color="grey-7" flat @click="resetForm" />
+                <q-btn type="submit" label="Registrar y Acuse" color="primary" icon-right="receipt_long" class="q-px-md">
+                   <q-tooltip>Registrar la entrega e imprimir acuse de recepción</q-tooltip>
                 </q-btn>
               </div>
             </q-form>
           </q-card-section>
         </q-card>
-
-        <!-- Modal de Acuse de Recibo Simulado -->
+        
+        <!-- Modal Acuse -->
         <q-dialog v-model="mostrarAcuse">
-          <q-card style="width: 580px; max-width: 95vw" class="q-pa-sm">
+           <q-card style="width: 580px; max-width: 95vw" class="q-pa-sm">
             <q-card-section class="row items-center bg-primary text-white rounded-borders">
               <q-icon name="verified" size="32px" class="q-mr-sm" />
               <div>
@@ -298,9 +310,7 @@
             </q-card-section>
 
             <q-card-section class="q-pt-md">
-              <div
-                class="row justify-between items-center q-mb-md bg-blue-1 q-pa-sm rounded-borders"
-              >
+              <div class="row justify-between items-center q-mb-md bg-blue-1 q-pa-sm rounded-borders">
                 <div>
                   <span class="text-caption text-grey-8">Folio de Acuse:</span><br />
                   <strong class="text-subtitle1 text-primary">{{ acuseData.folio }}</strong>
@@ -312,46 +322,12 @@
               </div>
 
               <q-list separator dense>
-                <q-item>
-                  <q-item-section class="text-grey-7">Empresa Receptora:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right">{{
-                    form.empresaDca
-                  }}</q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section class="text-grey-7">Cliente / Razón Social:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right">{{
-                    form.cliente
-                  }}</q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section class="text-grey-7">Tipo de Documento:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right">{{
-                    form.tipoDocumento
-                  }}</q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section class="text-grey-7">Periodo Fiscal:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right"
-                    >{{ form.periodo }} {{ form.ejercicio }}</q-item-section
-                  >
-                </q-item>
-                <q-item>
-                  <q-item-section class="text-grey-7">Vía de Entrega:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right">{{
-                    form.viaEntrega
-                  }}</q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section class="text-grey-7">Archivos Adjuntos:</q-item-section>
-                  <q-item-section class="text-weight-bold text-right">
-                    {{
-                      form.archivos && form.archivos.length
-                        ? form.archivos.length + ' archivo(s)'
-                        : 'Sin adjuntos (Físico)'
-                    }}
-                  </q-item-section>
-                </q-item>
+                <q-item><q-item-section class="text-grey-7">Empresa:</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.empresaDca }}</q-item-section></q-item>
+                <q-item><q-item-section class="text-grey-7">Cliente:</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.cliente }}</q-item-section></q-item>
+                <q-item><q-item-section class="text-grey-7">Asunto:</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.asunto }}</q-item-section></q-item>
+                <q-item><q-item-section class="text-grey-7">Departamento:</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.departamento }}</q-item-section></q-item>
+                <q-item><q-item-section class="text-grey-7">SLA (Fecha Límite):</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.fechaLimiteSla }}</q-item-section></q-item>
+                <q-item><q-item-section class="text-grey-7">Archivos:</q-item-section><q-item-section class="text-right text-weight-bold">{{ form.archivos ? form.archivos.length + ' archivo(s)' : 'Ninguno' }}</q-item-section></q-item>
               </q-list>
 
               <!-- Sección de Firmas Estampadas en el Acuse -->
@@ -366,7 +342,7 @@
                       :src="firmaClienteUrl"
                       style="max-width: 100%; height: 60px; object-fit: contain"
                     />
-                    <div v-else class="text-caption text-italic text-grey-5 style-no-signature">
+                    <div v-else class="text-caption text-italic text-grey-5" style="height: 60px; line-height: 60px;">
                       [Sin Firma Dibujada]
                     </div>
                   </div>
@@ -385,7 +361,7 @@
                       :src="firmaRecepcionUrl"
                       style="max-width: 100%; height: 60px; object-fit: contain"
                     />
-                    <div v-else class="text-caption text-italic text-grey-5 style-no-signature">
+                    <div v-else class="text-caption text-italic text-grey-5" style="height: 60px; line-height: 60px;">
                       [Sin Firma Dibujada]
                     </div>
                   </div>
@@ -402,20 +378,15 @@
                 <strong>Nota:</strong> Este comprobante digital valida la ingesta preliminar de la
                 documentación en el sistema del Grupo DCA para su posterior revisión contable.
               </div>
-            </q-card-section>
+             </q-card-section>
 
-            <q-card-actions align="right" class="q-pr-md q-pb-md">
-              <q-btn flat label="Cerrar" color="grey-8" v-close-popup />
-              <q-btn
-                icon="print"
-                label="Imprimir / PDF Acuse"
-                color="primary"
-                @click="simularImpresion"
-              >
-                <q-tooltip>Imprimir o descargar acuse digital en PDF</q-tooltip>
-              </q-btn>
-            </q-card-actions>
-          </q-card>
+             <q-card-actions align="right" class="q-pr-md q-pb-md">
+               <q-btn flat label="Cerrar" color="grey-8" v-close-popup />
+               <q-btn icon="print" label="Imprimir Acuse" color="primary" @click="() => {}">
+                 <q-tooltip>Imprimir o descargar acuse digital en PDF</q-tooltip>
+               </q-btn>
+             </q-card-actions>
+           </q-card>
         </q-dialog>
       </div>
     </div>
@@ -427,197 +398,137 @@ import { ref, reactive, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
+const submitted = ref(false)
 
-const opcionesEmpresasDca = [
-  'DCA Contadores Públicos y Consultores S.C.',
-  'DCA Asesores Fiscales y Legales S.A. de C.V.',
-  'DCA Soluciones Integrales de Nómina S.C.',
-]
-
-const opcionesClientes = [
-  'Comercializadora del Norte S.A. de C.V.',
-  'Constructora Grupo Hábitat S. de R.L.',
-  'Restaurantes y Alimentos del Centro S.A.',
-  'Servicios Médicos Especializados S.C.',
-  'Transportes y Logística Rápida S.A.',
-  'Industrias Plásticas de México S.A.',
-]
-
-const opcionesTiposDocumento = [
-  'Facturas Emitidas / Recibidas (CFDI XML/PDF)',
-  'Estados de Cuenta Bancarios',
-  'Comprobantes de Pago / Transferencias',
-  'Nómina y Comprobantes IMSS/INFONAVIT',
-  'Declaraciones / Acuses de Impuestos',
-  'Contratos / Expediente Legal',
-  'Papelería y Comprobantes Diversos',
-]
-
+const opcionesEmpresasDca = ['DCA Contadores Públicos y Consultores S.C.', 'DCA Asesores Fiscales y Legales S.A. de C.V.', 'DCA Soluciones Integrales de Nómina S.C.']
+const opcionesClientes = ['Comercializadora del Norte S.A. de C.V.', 'Constructora Grupo Hábitat S. de R.L.', 'Restaurantes y Alimentos del Centro S.A.', 'Servicios Médicos Especializados S.C.', 'Transportes y Logística Rápida S.A.', 'Industrias Plásticas de México S.A.']
+const opcionesTiposDocumento = ['Facturas Emitidas / Recibidas (CFDI XML/PDF)', 'Estados de Cuenta Bancarios', 'Comprobantes de Pago / Transferencias', 'Nómina y Comprobantes IMSS/INFONAVIT', 'Declaraciones / Acuses de Impuestos', 'Contratos / Expediente Legal', 'Papelería y Comprobantes Diversos']
 const opcionesEjercicios = ['2026', '2025', '2024']
-const opcionesMeses = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre',
-]
+const opcionesMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+const opcionesDepartamentos = ['Contabilidad', 'Fiscal', 'Nóminas', 'Legal']
+const opcionesPrioridades = ['URGENTE', 'ALTA', 'MEDIA', 'BAJA']
+const opcionesContadores = ['Lic. Ana Martínez', 'CP. Carlos Ruiz', 'Lic. Elena Gómez']
+
+const obtenerFechaSla = (prioridad) => {
+  const dias = { 'URGENTE': 2, 'ALTA': 4, 'MEDIA': 8, 'BAJA': 15 }[prioridad] || 8
+  let fecha = new Date()
+  let sumados = 0
+  while (sumados < dias) {
+    fecha.setDate(fecha.getDate() + 1)
+    if (fecha.getDay() !== 0 && fecha.getDay() !== 6) sumados++
+  }
+  return fecha.toISOString().split('T')[0]
+}
 
 const form = reactive({
+  folio: 'DCA-2026-' + Math.floor(1000 + Math.random() * 9000),
   empresaDca: 'DCA Contadores Públicos y Consultores S.C.',
   cliente: null,
+  asunto: '',
+  departamento: null,
   tipoDocumento: null,
   ejercicio: '2026',
   periodo: 'Octubre',
+  prioridad: 'MEDIA',
+  fechaLimiteSla: obtenerFechaSla('MEDIA'),
+  contadorAsignado: null,
   viaEntrega: 'Digital (PWA / Web)',
+  notificarCorreo: false,
   recibidoPor: 'Recepción DCA (Ana Martínez)',
   archivos: null,
-  observaciones: '',
+  observaciones: ''
 })
+
+const calcularSla = () => { form.fechaLimiteSla = obtenerFechaSla(form.prioridad) }
+const onClienteChange = (val) => { if (val) form.contadorAsignado = 'CP. Carlos Ruiz' }
+const validarTamañoArchivos = (files) => {
+  if (!files) return
+  for (const file of files) {
+    if (file.size > 25 * 1024 * 1024) {
+      $q.notify({ type: 'negative', message: 'Archivo ' + file.name + ' excede 25MB' })
+      form.archivos = form.archivos.filter(f => f !== file)
+    }
+  }
+}
 
 const mostrarAcuse = ref(false)
-const acuseData = reactive({
-  folio: '',
-  fechaHora: '',
-})
-
-// Lógica de Canvas para Firmas Digitales
-const canvasCliente = ref(null)
-const canvasRecepcion = ref(null)
-let ctxCliente = null
-let ctxRecepcion = null
-let isDrawingC = false
-let isDrawingR = false
-
+const acuseData = reactive({ folio: '', fechaHora: '' })
 const firmaClienteUrl = ref('')
 const firmaRecepcionUrl = ref('')
 
+// Canvas
+const canvasCliente = ref(null)
+const canvasRecepcion = ref(null)
+const firmaClienteVacia = ref(true)
+const firmaRecepcionVacia = ref(true)
+let ctxCliente = null, ctxRecepcion = null
+let isDrawingC = false, isDrawingR = false
+
 onMounted(() => {
-  if (canvasCliente.value) {
-    ctxCliente = canvasCliente.value.getContext('2d')
-    ctxCliente.lineWidth = 2
-    ctxCliente.lineCap = 'round'
-    ctxCliente.strokeStyle = '#1565C0'
-  }
-  if (canvasRecepcion.value) {
-    ctxRecepcion = canvasRecepcion.value.getContext('2d')
-    ctxRecepcion.lineWidth = 2
-    ctxRecepcion.lineCap = 'round'
-    ctxRecepcion.strokeStyle = '#2E7D32'
-  }
+  [canvasCliente.value, canvasRecepcion.value].forEach((c, idx) => {
+    c.width = c.offsetWidth
+    c.height = c.offsetHeight
+    const ctx = c.getContext('2d')
+    ctx.lineWidth = 2
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = idx === 0 ? '#1565C0' : '#2E7D32'
+    if (idx === 0) ctxCliente = ctx
+    else ctxRecepcion = ctx
+  })
 })
 
-function getPos(canvas, evt) {
+const getPos = (canvas, e) => {
   const rect = canvas.getBoundingClientRect()
-  const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX
-  const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY
-  return {
-    x: clientX - rect.left,
-    y: clientY - rect.top,
-  }
+  return { x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left, y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top }
 }
 
-// Canvas Cliente
-const startDrawingCliente = (e) => {
-  isDrawingC = true
-  const pos = getPos(canvasCliente.value, e)
-  ctxCliente.beginPath()
-  ctxCliente.moveTo(pos.x, pos.y)
-}
-const drawCliente = (e) => {
-  if (!isDrawingC) return
-  const pos = getPos(canvasCliente.value, e)
-  ctxCliente.lineTo(pos.x, pos.y)
-  ctxCliente.stroke()
-}
-const stopDrawingCliente = () => {
-  isDrawingC = false
-}
-const limpiarFirmaCliente = () => {
-  if (ctxCliente && canvasCliente.value) {
-    ctxCliente.clearRect(0, 0, canvasCliente.value.width, canvasCliente.value.height)
-    firmaClienteUrl.value = ''
-  }
+const startDrawing = (e, canvas, ctx, isVacia) => {
+  const pos = getPos(canvas, e)
+  ctx.beginPath()
+  ctx.moveTo(pos.x, pos.y)
+  isVacia.value = false
+  return true
 }
 
-// Canvas Recepción
-const startDrawingRecepcion = (e) => {
-  isDrawingR = true
-  const pos = getPos(canvasRecepcion.value, e)
-  ctxRecepcion.beginPath()
-  ctxRecepcion.moveTo(pos.x, pos.y)
-}
-const drawRecepcion = (e) => {
-  if (!isDrawingR) return
-  const pos = getPos(canvasRecepcion.value, e)
-  ctxRecepcion.lineTo(pos.x, pos.y)
-  ctxRecepcion.stroke()
-}
-const stopDrawingRecepcion = () => {
-  isDrawingR = false
-}
-const limpiarFirmaRecepcion = () => {
-  if (ctxRecepcion && canvasRecepcion.value) {
-    ctxRecepcion.clearRect(0, 0, canvasRecepcion.value.width, canvasRecepcion.value.height)
-    firmaRecepcionUrl.value = ''
-  }
-}
+const startDrawingCliente = (e) => { isDrawingC = startDrawing(e, canvasCliente.value, ctxCliente, firmaClienteVacia) }
+const drawCliente = (e) => { if (isDrawingC) { const pos = getPos(canvasCliente.value, e); ctxCliente.lineTo(pos.x, pos.y); ctxCliente.stroke() } }
+const stopDrawingCliente = () => { isDrawingC = false }
+const limpiarFirmaCliente = () => { ctxCliente.clearRect(0, 0, canvasCliente.value.width, canvasCliente.value.height); firmaClienteVacia.value = true }
+
+const startDrawingRecepcion = (e) => { isDrawingR = startDrawing(e, canvasRecepcion.value, ctxRecepcion, firmaRecepcionVacia) }
+const drawRecepcion = (e) => { if (isDrawingR) { const pos = getPos(canvasRecepcion.value, e); ctxRecepcion.lineTo(pos.x, pos.y); ctxRecepcion.stroke() } }
+const stopDrawingRecepcion = () => { isDrawingR = false }
+const limpiarFirmaRecepcion = () => { ctxRecepcion.clearRect(0, 0, canvasRecepcion.value.width, canvasRecepcion.value.height); firmaRecepcionVacia.value = true }
 
 const onSubmit = () => {
-  if (canvasCliente.value) {
-    firmaClienteUrl.value = canvasCliente.value.toDataURL()
+  submitted.value = true
+  if (firmaClienteVacia.value || firmaRecepcionVacia.value) {
+    $q.notify({ type: 'warning', message: 'Ambas firmas son obligatorias para el registro' })
+    return
   }
-  if (canvasRecepcion.value) {
-    firmaRecepcionUrl.value = canvasRecepcion.value.toDataURL()
-  }
-
-  acuseData.folio = 'DCA-REC-' + Math.floor(100000 + Math.random() * 900000)
+  acuseData.folio = form.folio
   acuseData.fechaHora = new Date().toLocaleString('es-MX')
-  mostrarAcuse.value = true
+  
+  // Captura de firmas para persistencia
+  firmaClienteUrl.value = canvasCliente.value.toDataURL()
+  firmaRecepcionUrl.value = canvasRecepcion.value.toDataURL()
 
-  $q.notify({
-    type: 'positive',
-    message: 'Documento registrado con firmas exitosamente en el sistema Grupo DCA',
-    position: 'top-right',
-  })
+  mostrarAcuse.value = true
 }
 
 const resetForm = () => {
-  form.cliente = null
-  form.tipoDocumento = null
-  form.archivos = null
-  form.observaciones = ''
-  limpiarFirmaCliente()
-  limpiarFirmaRecepcion()
-}
-
-const simularImpresion = () => {
-  $q.notify({
-    type: 'info',
-    message: 'Generando archivo PDF del Acuse de Recepción con firmas digitalizadas...',
-    position: 'bottom-right',
-  })
+  submitted.value = false
+  form.asunto = ''; form.departamento = null; form.contadorAsignado = null; form.archivos = null
+  limpiarFirmaCliente(); limpiarFirmaRecepcion()
+  firmaClienteUrl.value = ''
+  firmaRecepcionUrl.value = ''
 }
 </script>
 
 <style scoped>
-.style-signature-canvas {
-  border: 1px dashed #bdbdbd;
-  touch-action: none;
-  cursor: crosshair;
-  width: 100%;
-}
+.style-signature-canvas { touch-action: none; cursor: crosshair; width: 100%; height: 120px; }
+.border-negative { border: 2px solid #C10015; }
 .border-grey {
   border: 1px solid #e0e0e0;
-}
-.style-no-signature {
-  height: 60px;
-  line-height: 60px;
 }
 </style>
