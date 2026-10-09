@@ -3,7 +3,11 @@
     <div>
       <div style="font-size: 30vh">404</div>
 
-      <div class="text-h2" style="opacity: 0.4">Oops. Nothing here...</div>
+      <div class="text-h2" style="opacity: 0.4">No encontramos esta página</div>
+
+      <div class="text-subtitle1 q-mt-sm" style="opacity: 0.7">
+        La dirección solicitada no existe o fue movida.
+      </div>
 
       <q-btn
         class="q-mt-xl"
@@ -11,9 +15,11 @@
         text-color="blue"
         unelevated
         to="/"
-        label="Go Home"
+        label="Ir al inicio"
         no-caps
-      />
+      >
+        <q-tooltip>Regresar a la pantalla principal del sistema</q-tooltip>
+      </q-btn>
     </div>
   </div>
 </template>

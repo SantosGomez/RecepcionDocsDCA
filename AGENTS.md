@@ -56,6 +56,7 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
 - los textos de las vistas no tienen que ser ambiguos para que todas los usuarios puedan entender
 - tener tooltips para dar contexto al usuario y evitar ambiguedad.
 - los botones que tengan un icono deben tener un tooltip.
+- los botones de icono (como el menú lateral) deben tener también `aria-label` en español para lectores de pantalla.
 
 ## Reglas de dominio / trampas conocidas
 

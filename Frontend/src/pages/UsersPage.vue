@@ -10,10 +10,10 @@
       </div>
       <div class="row q-gutter-sm">
         <q-btn icon="person_add" color="primary" label="Nuevo Usuario" @click="nuevoUsuario">
-          <q-tooltip icon="info">Registrar un nuevo usuario en la plataforma</q-tooltip>
+          <q-tooltip>Registrar un nuevo usuario en la plataforma</q-tooltip>
         </q-btn>
         <q-btn icon="refresh" flat color="primary" label="Actualizar" @click="cargarUsuarios">
-          <q-tooltip icon="info">Recargar la lista de usuarios registrados</q-tooltip>
+          <q-tooltip>Recargar la lista de usuarios registrados</q-tooltip>
         </q-btn>
       </div>
     </div>
@@ -113,7 +113,6 @@
           :rows="filteredRows"
           :columns="columns"
           row-key="id"
-          :filter="filter"
           flat
           bordered
           :pagination="{ rowsPerPage: 6 }"
@@ -213,7 +212,7 @@ const rows = ref([
   {
     id: 1,
     nombre: 'Lic. Roberto Garza',
-    email: 'rgarza@grupodca.com',
+    email: 'admin@ejemplo.com',
     empresaDca: 'DCA Contadores Públicos S.C.',
     rol: 'Administrador',
     fechaRegistro: '2025-01-15',
@@ -222,7 +221,7 @@ const rows = ref([
   {
     id: 2,
     nombre: 'C.P. Ana Martínez',
-    email: 'amartinez@grupodca.com',
+    email: 'contador@ejemplo.com',
     empresaDca: 'DCA Asesores Fiscales S.A.',
     rol: 'Contador',
     fechaRegistro: '2025-03-10',
@@ -231,7 +230,7 @@ const rows = ref([
   {
     id: 3,
     nombre: 'María López',
-    email: 'recepcion@grupodca.com',
+    email: 'recepcion@ejemplo.com',
     empresaDca: 'DCA Contadores Públicos S.C.',
     rol: 'Recepcionista',
     fechaRegistro: '2025-05-20',
@@ -240,7 +239,7 @@ const rows = ref([
   {
     id: 4,
     nombre: 'Comercializadora del Norte (Acceso Cliente)',
-    email: 'contacto@cnorte.com',
+    email: 'contacto@ejemplo.com',
     empresaDca: 'Cliente Externo',
     rol: 'Cliente',
     fechaRegistro: '2026-02-01',
@@ -249,7 +248,7 @@ const rows = ref([
   {
     id: 5,
     nombre: 'C.P. Miguel Ángel Torres',
-    email: 'mtorres@grupodca.com',
+    email: 'mtorres@ejemplo.com',
     empresaDca: 'DCA Soluciones de Nómina S.C.',
     rol: 'Contador',
     fechaRegistro: '2025-08-12',
@@ -258,8 +257,16 @@ const rows = ref([
 ])
 
 const filteredRows = computed(() => {
-  if (filtroRol.value === 'Todos los Roles') return rows.value
-  return rows.value.filter((r) => r.rol === filtroRol.value)
+  const q = filter.value.toLowerCase().trim()
+  return rows.value.filter((r) => {
+    const coincideRol = filtroRol.value === 'Todos los Roles' || r.rol === filtroRol.value
+    const coincideTexto =
+      !q ||
+      r.nombre.toLowerCase().includes(q) ||
+      r.email.toLowerCase().includes(q) ||
+      r.rol.toLowerCase().includes(q)
+    return coincideRol && coincideTexto
+  })
 })
 
 const getRolColor = (rol) => {

@@ -182,10 +182,9 @@
                   <q-select
                     v-model="form.viaEntrega"
                     :options="[
-                      'Digital (PWA / Web)',
-                      'Físico en Ventanilla',
+                      'Digital',
+                      'Físico',
                       'Correo Electrónico',
-                      'Mensajería',
                     ]"
                     label="Vía de Entrega *"
                     outlined
@@ -432,7 +431,7 @@ const form = reactive({
   prioridad: 'MEDIA',
   fechaLimiteSla: obtenerFechaSla('MEDIA'),
   contadorAsignado: null,
-  viaEntrega: 'Digital (PWA / Web)',
+  viaEntrega: 'Digital',
   notificarCorreo: false,
   recibidoPor: 'Recepción DCA (Ana Martínez)',
   archivos: null,

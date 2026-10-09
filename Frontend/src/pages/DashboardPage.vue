@@ -115,7 +115,6 @@
           :rows="filteredRows"
           :columns="columns"
           row-key="id"
-          :filter="filter"
           flat
           bordered
           :pagination="{ rowsPerPage: 6 }"
@@ -170,7 +169,9 @@
         <q-card-section class="bg-primary text-white row items-center">
           <div class="text-h6">Detalle de Documento</div>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="close" flat round dense v-close-popup>
+            <q-tooltip>Cerrar detalle del documento</q-tooltip>
+          </q-btn>
         </q-card-section>
         <q-card-section v-if="docSeleccionado" class="q-gutter-y-sm">
           <div><strong>Folio:</strong> {{ docSeleccionado.folio }}</div>
@@ -309,8 +310,13 @@ const rows = ref([
 ])
 
 const filteredRows = computed(() => {
-  if (filtroEstado.value === 'Todos') return rows.value
-  return rows.value.filter((r) => r.estado === filtroEstado.value)
+  const q = filter.value.toLowerCase().trim()
+  return rows.value.filter((r) => {
+    const coincideEstado = filtroEstado.value === 'Todos' || r.estado === filtroEstado.value
+    const coincideTexto =
+      !q || r.folio.toLowerCase().includes(q) || r.cliente.toLowerCase().includes(q)
+    return coincideEstado && coincideTexto
+  })
 })
 
 const verDetalles = (row) => {

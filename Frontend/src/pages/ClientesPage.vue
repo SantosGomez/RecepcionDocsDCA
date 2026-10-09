@@ -175,6 +175,7 @@ const filter = ref('')
 
 const getSemaforoColor = (nivel) => {
   if (nivel === 'Al día') return 'positive'
+  if (nivel === 'En Proceso') return 'amber-8'
   if (nivel === 'Incompleto') return 'amber-9'
   if (nivel === 'Vencido') return 'negative'
   return 'grey-7'
@@ -182,6 +183,7 @@ const getSemaforoColor = (nivel) => {
 
 const getSemaforoIcon = (nivel) => {
   if (nivel === 'Al día') return 'check_circle'
+  if (nivel === 'En Proceso') return 'hourglass_top'
   if (nivel === 'Incompleto') return 'warning'
   if (nivel === 'Vencido') return 'dangerous'
   return 'help'
@@ -223,7 +225,7 @@ const rows = ref([
     rfc: 'CGH180920K99',
     empresaDca: 'DCA Asesores Fiscales S.A.',
     contador: 'C.P. Ana Martínez',
-    semaforo: 'Incompleto',
+    semaforo: 'En Proceso',
     pendientes: ['Estados de Cuenta Santander', 'Facturas de Gastos'],
   },
   {

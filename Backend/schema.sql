@@ -80,6 +80,8 @@ CREATE TABLE IF NOT EXISTS documentos (
     estado ENUM('RECEPCIONADO', 'EN_PROCESO', 'PENDIENTE_CLIENTE', 'COMPLETADO', 'CANCELADO') DEFAULT 'RECEPCIONADO',
     firma_cliente LONGTEXT NULL,
     firma_recep LONGTEXT NULL,
+    firma_contador_recep LONGTEXT NULL,
+    firma_contador LONGTEXT NULL,
     notificar_correo TINYINT(1) DEFAULT 0,
     fecha_recepcion DATETIME DEFAULT CURRENT_TIMESTAMP,
     fecha_limite_sla DATETIME NULL,

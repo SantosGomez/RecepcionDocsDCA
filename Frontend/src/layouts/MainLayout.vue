@@ -2,7 +2,14 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="bg-navbar text-white">
       <q-toolbar class="bg-navbar">
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer">
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menú lateral"
+          @click="leftDrawerOpen = !leftDrawerOpen"
+        >
           <q-tooltip>Mostrar / Ocultar menú lateral</q-tooltip>
         </q-btn>
         <q-toolbar-title class="row items-center">
@@ -25,7 +32,13 @@
           Menú Principal
         </q-item-label>
 
-        <q-item clickable v-ripple to="/" active-class="text-primary text-weight-bold bg-blue-1">
+        <q-item
+          clickable
+          v-ripple
+          to="/"
+          exact
+          active-class="text-primary text-weight-bold bg-blue-1"
+        >
           <q-item-section avatar><q-icon name="cloud_upload" color="primary" /></q-item-section>
           <q-item-section>Recepción de Docs</q-item-section>
           <q-tooltip anchor="center right" self="center left"
@@ -37,6 +50,7 @@
           clickable
           v-ripple
           to="/dashboard"
+          exact
           active-class="text-primary text-weight-bold bg-blue-1"
         >
           <q-item-section avatar><q-icon name="dashboard" color="primary" /></q-item-section>
@@ -46,10 +60,12 @@
           >
         </q-item>
 
+        <q-separator class="q-my-xs" />
         <q-item
           clickable
           v-ripple
           to="/clientes"
+          exact
           active-class="text-primary text-weight-bold bg-blue-1"
         >
           <q-item-section avatar><q-icon name="groups" color="primary" /></q-item-section>
@@ -62,7 +78,23 @@
         <q-item
           clickable
           v-ripple
+          to="/direccionamiento"
+          exact
+          active-class="text-primary text-weight-bold bg-blue-1"
+        >
+          <q-item-section avatar><q-icon name="assignment_return" color="primary" /></q-item-section>
+          <q-item-section>Direccionamiento</q-item-section>
+          <q-tooltip anchor="center right" self="center left"
+            >Entrega formal y firma de recepción del contador asignado</q-tooltip
+          >
+        </q-item>
+
+        <q-separator class="q-my-xs" />
+        <q-item
+          clickable
+          v-ripple
           to="/seguimiento"
+          exact
           active-class="text-primary text-weight-bold bg-blue-1"
         >
           <q-item-section avatar><q-icon name="track_changes" color="primary" /></q-item-section>
@@ -76,12 +108,21 @@
           clickable
           v-ripple
           to="/usuarios"
+          exact
           active-class="text-primary text-weight-bold bg-blue-1"
         >
           <q-item-section avatar><q-icon name="manage_accounts" color="primary" /></q-item-section>
           <q-item-section>Usuarios del Sistema</q-item-section>
           <q-tooltip anchor="center right" self="center left"
             >Gestión de usuarios, roles y permisos</q-tooltip
+          >
+        </q-item>
+      <q-separator class="q-my-xs" />
+        <q-item clickable v-ripple to="/login" class="text-grey-8">
+          <q-item-section avatar><q-icon name="logout" color="negative" /></q-item-section>
+          <q-item-section>Cerrar Sesión</q-item-section>
+          <q-tooltip anchor="center right" self="center left"
+            >Finalizar la sesión actual y volver a la pantalla de ingreso</q-tooltip
           >
         </q-item>
       </q-list>
@@ -95,9 +136,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+// Estado del menú lateral (controlado por q-drawer)
+const leftDrawerOpen = ref(false)
 </script>
