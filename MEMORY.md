@@ -23,6 +23,7 @@ Memoria del proyecto entre sesiones. Máximo ~50 líneas: resume o elimina lo qu
 - **Correcciones:** Canvas de firma redimensionado para corregir deformación de trazo; folios unificados a `DCA-2026-XXXX`.
 
 - El menú lateral vive solo en `MainLayout.vue`: **toda vista nueva debe registrarse ahí** además de en `router/routes.js`, si no queda inaccesible.
+- El drawer se controla con `leftDrawerOpen` y `isMini` (refs) para soportar el modo colapsado (mini) con íconos + tooltips y expansión suave a color azul institucional `$primary`.
 - El drawer se controla con `leftDrawerOpen` (ref) y `v-model` en `q-drawer`; no usar `$q.leftDrawer.value` en `v-model` porque no se desenvuelve automáticamente en el template.
 
 - **Login (LoginPage.vue):** Pantalla de ingreso en `/login`, fuera de `MainLayout` (ocupa pantalla completa). Redirige según rol: Administrador→`/dashboard`, Contador→`/direccionamiento`, Recepcionista→`/`, Cliente→`/seguimiento`.
@@ -33,6 +34,11 @@ Memoria del proyecto entre sesiones. Máximo ~50 líneas: resume o elimina lo qu
 - **Identidad visual en `IndexPage.vue`:** acuse y chip del folio usan `$secondary` (#5abbf1) en vez de `blue-1`; bordes y fondos de firma usan `$secondary-white-alternative` (#e5e6eb).
 - **Tipografías cargadas en `app.scss`:** Matter (texto general, pesos 400/500/600/700) y Monument Extended (400/700). Se quitó `roboto-font` de los extras en `quasar.config.js`.
 - **Logos oficiales siguen sin usarse:** las vistas cargan `public/logo.jpg`, no las variantes de `/src/assets/icons`.
+- **Menú lateral colapsable (`MainLayout.vue`):** tiene dos gestos separados. `toggleDrawer` (hamburguesa del header) abre/cierra el drawer completo; `toggleMini` (logo del drawer) alterna el modo mini. `isMini` inicia en `false` para que el menú abra completo. En modo mini se ocultan con `v-if="!isMini"` el encabezado, los separadores y el subtítulo.
+- **Hamburguesa solo en móvil:** usa `class="lt-md"`; el logo del drawer usa `class="gt-sm"` y actúa solo en escritorio/tablet. En móvil el drawer es overlay y el logo no debe colapsar.
+- **Toolbar responsivo (Opción A):** el header muestra **solo el isotipo**, sin texto. La marca completa ("Grupo DelGrow S.C." + subtítulo) vive únicamente en el drawer. Evita la duplicidad header/drawer. El tamaño del logo se controla con la clase `.toolbar-logo` (40px escritorio, 32px en móvil vía media query).
+- **El header SOLO existe en móvil:** en escritorio y tablet no hay barra superior; el drawer mini (68px) es la única columna de navegación y lleva la marca. Se usa `view="lHh Lpr lFf"` de 9 caracteres requeridos por Quasar.
+- **Logos oficiales ya en `public/logos/`:** se sirven desde la raíz usando `/logos/PNG/DELGROW_ISOTIPO-OF_T.png` (isotipo blanco monocromo).
 
 ## Aprendizajes y errores a evitar
 

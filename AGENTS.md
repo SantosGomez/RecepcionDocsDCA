@@ -7,9 +7,10 @@ PWA para gestion y recepcion de documentos del grupo DCA, para uso interno y ext
 - HTML, VUE 3, Vite, Pinia, JavaScript, Quasar Framework, librerias como axios, quasar, jspdf, html2pdf.js.
 - El proyecto tiene 2 carpetas la carpeta "Frontend" que es donde se encuentra el codigo de la aplicacion, el esqueleto del proyecto, vistas y funciones del framework y la carpeta "Backend" que es el servidor de base de datos y la logica del negocio.
 - en las carpetas de el proyecto en front se tiene una carpeta de nombre `/src` la cual en la carpeta `/assets` se tiene la tipografia y las imagenes que se utilizara para el proyecto.
-- la tipografia se encuentra en la carpeta `/assets/fonts` y las imagenes se encuentran en la carpeta `/assets/icons` la cual se divide en 2 subcarpetas `/assets/icons/JPG` y `/assets/icons/PNG`.
+- la tipografia se encuentra en la carpeta `/assets/fonts` y las imagenes se encuentran en la carpeta `public/logos` la cual se divide en 2 subcarpetas `public/logos/JPG` y `public/logos/PNG`.
 - la carpeta css con los estilos se encuentra en la carpeta `/src/css` y ya tiene la paleta de colores institucional definidos en `/src/css/quasar.variables.scss`.
 - estos son las variables o componentes scss de los colores institucionales: $primary, $secondary, $accent, $secondary-black, $secondary-white, $secondary-white-alternative y estos de para el semaforo y estados de notificaciones o alertas: $positive, $negative, $info, $warning.
+- en la elaboracion de dialogs trata
 
 ## Vistas
 
